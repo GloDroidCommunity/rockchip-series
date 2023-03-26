@@ -1,0 +1,65 @@
+From 60cf423d4cd429be4fc580eebc5f3c5136606221 Mon Sep 17 00:00:00 2001
+From: Roman Stratiienko <r.stratiienko@gmail.com>
+Date: Sun, 30 Apr 2023 17:24:24 +0300
+Subject: [PATCH 3/7] platform: Support ATF-less builds
+
+Amlogic and Broadcom platforms do not require ATF.
+
+Signed-off-by: Roman Stratiienko <r.stratiienko@gmail.com>
+---
+ platform/Android.mk     | 2 ++
+ platform/atf.mk         | 2 ++
+ platform/uboot/uboot.mk | 2 ++
+ 3 files changed, 6 insertions(+)
+
+diff --git a/platform/Android.mk b/platform/Android.mk
+index e323ecf..a98d094 100644
+--- a/platform/Android.mk
++++ b/platform/Android.mk
+@@ -19,11 +19,13 @@ CROSS_COMPILE := prebuilts/gcc/linux-x86/aarch64/gcc-linaro-$(TRIPLE)/bin/$(TRIP
+ # Common for ATF and u-boot
+ ATF_OUT		:= $(PRODUCT_OUT)/obj/ATF_OBJ
+ 
++ifneq ($(ATF_PLAT),)
+ ifeq ($(PRODUCT_BOARD_PLATFORM),rockchip)
+ ATF_BINARY  := $(ATF_OUT)/$(ATF_PLAT)/debug/bl31/bl31.elf
+ else
+ ATF_BINARY	:= $(ATF_OUT)/$(ATF_PLAT)/debug/bl31.bin
+ endif
++endif
+ 
+ ifeq ($(PRODUCT_BOARD_PLATFORM),sunxi)
+ ifneq ($(CRUST_FIRMWARE_DEFCONFIG),)
+diff --git a/platform/atf.mk b/platform/atf.mk
+index 4fe6264..f3c94fe 100644
+--- a/platform/atf.mk
++++ b/platform/atf.mk
+@@ -17,8 +17,10 @@ ATF_SRC_FILES   := $(sort $(shell find -L $(ATF_SRC) -not -path '*/\.git/*'))
+ M0_TRIPLE := arm-eabi
+ M0_COMPILE := M0_CROSS_COMPILE=$(AOSP_TOP_ABS)/prebuilts/gcc/linux-x86/arm/gcc-linaro-$(M0_TRIPLE)/bin/$(M0_TRIPLE)-
+ 
++ifneq ($(ATF_PLAT),)
+ $(ATF_BINARY): $(ATF_SRC_FILES)
+ 	$(M0_COMPILE) $(MAKE_COMMON) -C $(ATF_SRC) BUILD_BASE=$(AOSP_TOP_ABS)/$(ATF_OUT) PLAT=$(ATF_PLAT) DEBUG=1 bl31
+ 	touch -c $(ATF_BINARY)
++endif
+ 
+ endif
+diff --git a/platform/uboot/uboot.mk b/platform/uboot/uboot.mk
+index 5080ec2..5877beb 100644
+--- a/platform/uboot/uboot.mk
++++ b/platform/uboot/uboot.mk
+@@ -30,8 +30,10 @@ UBOOT_KCFLAGS = \
+     $(TARGET_BOOTLOADER_CFLAGS)
+ 
+ ifeq ($(TARGET_ARCH),arm64)
++ifneq ($(ATF_PLAT),)
+ BL31_SET := BL31=$(AOSP_TOP_ABS)/$(ATF_BINARY)
+ endif
++endif
+ 
+ ifeq ($(PRODUCT_BOARD_PLATFORM),sunxi)
+ ifneq ($(CRUST_FIRMWARE_DEFCONFIG),)
+-- 
+2.37.2
+

@@ -1,0 +1,39 @@
+From 66211d6375a49d0d6d0b93c8ed42d696bb53aae6 Mon Sep 17 00:00:00 2001
+From: Roman Stratiienko <r.stratiienko@gmail.com>
+Date: Sun, 30 Apr 2023 17:28:31 +0300
+Subject: [PATCH 5/7] tools: Remove images before creating new.
+
+gensdimg.sh script is more happy after that.
+
+Signed-off-by: Roman Stratiienko <r.stratiienko@gmail.com>
+---
+ platform/tools/tools.mk | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/platform/tools/tools.mk b/platform/tools/tools.mk
+index deb5953..c14607f 100644
+--- a/platform/tools/tools.mk
++++ b/platform/tools/tools.mk
+@@ -46,9 +46,11 @@ $(PRODUCT_OUT)/flash-emmc.sh: $(PLATFORM_PATH)/tools/flash-all.sh
+ 	sed -i "s/__SUFFIX__/-emmc/g" $@
+ 
+ $(PRODUCT_OUT)/deploy-sd.img: $(GENSDIMG) $(DEPLOY_BOOTLOADER) $(PRODUCT_OUT)/boot.img
++	rm -f $@
+ 	$(NATIVE_PATH) $< -C=$(PRODUCT_OUT) -T=DEPLOY-SD -P=$(PRODUCT_BOARD_PLATFORM) $(notdir $@)
+ 
+ $(PRODUCT_OUT)/deploy-sd-for-emmc.img: $(GENSDIMG) $(DEPLOY_BOOTLOADER) $(PRODUCT_OUT)/boot.img
++	rm -f $@
+ 	$(NATIVE_PATH) $< -C=$(PRODUCT_OUT) -T=DEPLOY-SD-FOR-EMMC -P=$(PRODUCT_BOARD_PLATFORM) $(notdir $@)
+ 
+ $(PRODUCT_OUT)/deploy-gpt.img: $(PRODUCT_OUT)/deploy-sd.img $(GENSDIMG)
+@@ -56,6 +58,7 @@ $(PRODUCT_OUT)/deploy-gpt.img: $(PRODUCT_OUT)/deploy-sd.img $(GENSDIMG)
+ 
+ $(PRODUCT_OUT)/sdcard.img: $(GENSDIMG) $(DEPLOY_FILES)
+ 	$(call pretty,"Creating sdcard image...")
++	rm -f $@
+ 	$(NATIVE_PATH) $< -C=$(PRODUCT_OUT) -T=SD -P=$(PRODUCT_BOARD_PLATFORM)
+ 
+ .PHONY: sdcard
+-- 
+2.37.2
+

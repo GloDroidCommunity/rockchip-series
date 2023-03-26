@@ -1,0 +1,28 @@
+From 44b201c93dfe7a5f7186e2f22f63b5eb7a3427ce Mon Sep 17 00:00:00 2001
+From: Roman Stratiienko <r.stratiienko@gmail.com>
+Date: Sun, 30 Apr 2023 17:22:10 +0300
+Subject: [PATCH 2/7] uboot: Enable CONFIG_CMD_SETEXPR config
+
+Option is required for sdcard autoresize feature and is not enabled
+for all platforms by default.
+
+Signed-off-by: Roman Stratiienko <r.stratiienko@gmail.com>
+---
+ platform/common/uboot.config | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/platform/common/uboot.config b/platform/common/uboot.config
+index 13e1cc3..a15cb97 100644
+--- a/platform/common/uboot.config
++++ b/platform/common/uboot.config
+@@ -5,6 +5,7 @@ CONFIG_CMD_ABOOTIMG=y
+ CONFIG_CMD_ADTIMG=y
+ CONFIG_CMD_GPT=y
+ CONFIG_CMD_GPT_RENAME=y
++CONFIG_CMD_SETEXPR=y
+ CONFIG_USB_GADGET=y
+ CONFIG_USB_FUNCTION_FASTBOOT=y
+ CONFIG_CMD_FASTBOOT=y
+-- 
+2.37.2
+
